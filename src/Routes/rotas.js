@@ -9,7 +9,7 @@ import Error from '../Pages/Error';
 export default function Rotas() {
     return (
         <Routes>
-            <Route exact path="/" element={<Home />} />
+            <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/admin" element={<Private><Admin /></Private>} />
 
