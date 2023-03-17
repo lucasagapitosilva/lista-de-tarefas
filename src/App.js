@@ -1,5 +1,5 @@
 import { BrowserRouter } from 'react-router-dom';
-import Rotas from './rotas'
+import Rotas from './Routes/rotas'
 
 function App() {
   return (
