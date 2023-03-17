@@ -1,14 +1,11 @@
-import './App.css';
-
-import { db, auth } from './firebase';
-import { useState, useEffect } from 'react';
-import { signInWithEmailAndPassword, } from 'firebase/auth';
+import { BrowserRouter } from 'react-router-dom';
+import Rotas from './rotas'
 
 function App() {
   return (
-    <div className="container">
-      <h1>TESTE</h1>
-    </div>
+    <BrowserRouter>
+      <Rotas/>
+    </BrowserRouter>
   );
 }
 
