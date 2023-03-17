@@ -2,19 +2,27 @@ import './style.css';
 
 import { db, auth } from '../../firebase';
 import { useState, useEffect } from 'react';
-import { signInWithEmailAndPassword, } from 'firebase/auth';
-import { Link } from 'react-router-dom';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Home() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    function handleLogin(event) {
+    const navigate = useNavigate();
+
+    async function handleLogin(event) {
         event.preventDefault();
 
         if(email !== '' && password !== '') {
-            alert('clicou')
+            
+            await signInWithEmailAndPassword(auth, email, password)
+            .then(() => {
+                navigate('/admin', {replace: true})
+            })
+            .catch((error) => console.log(error))
+
         } else {
             alert('Preencha o formulário')
         }
@@ -34,7 +42,6 @@ export default function Home() {
                 />
 
                 <input 
-                autoComplete={false}
                 type="password"
                 placeholder="********"
                 value={password}
