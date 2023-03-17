@@ -2,13 +2,14 @@ import './style.css'
 import { useState, useEffect } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth, db } from '../../firebase';
-import { addDoc, collection, onSnapshot, query, orderBy, where, doc, deleteDoc } from 'firebase/firestore';
+import { addDoc, collection, onSnapshot, query, orderBy, where, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 
 export default function Admin() {
 
     const [tarefa, setTarefa] = useState('');
     const [user, setUser] = useState({});
     const [tarefas, setTarefas] = useState([]);
+    const [edit, setEdit] = useState({});
 
     useEffect(() => {
         async function loadTarefas() {
@@ -49,6 +50,11 @@ export default function Admin() {
             return;
         }
 
+        if (edit?.id) {
+            handleUpdateTarefa();
+            return;
+        }
+
         await addDoc(collection(db, 'tarefas'), {
             tarefa: tarefa,
             created: new Date(),
@@ -67,9 +73,33 @@ export default function Admin() {
     async function deleteTarefa(id) {
         const docRef = doc(db, 'tarefas', id)
         await deleteDoc(docRef)
-        .then(() => {
+            .then(() => {
 
+            })
+    }
+
+    function editTarefa(item) {
+        setTarefa(item.tarefa)
+        setEdit(item)
+    }
+
+    async function handleUpdateTarefa() {
+        const docRef = doc(db, 'tarefas', edit?.id)
+        await updateDoc(docRef, {
+            tarefa: tarefa
         })
+        .then(() => {
+            setTarefa('');
+            setEdit({});
+        })
+        .catch((error) => {
+            alert('ERRO AO ATUALIZAR')
+            console.log(error)
+
+            setTarefa('');
+            setEdit({});
+        })
+        
     }
 
     return (
@@ -83,7 +113,11 @@ export default function Admin() {
                     onChange={event => setTarefa(event.target.value)}
                 />
 
-                <button className='btn-register' type="submit">Registrar tarefa</button>
+                {Object.keys(edit).length > 0 ? (
+                    <button className='btn-register' type="submit">Atualizar tarefa</button>
+                ) : (
+                    <button className='btn-register' type="submit">Registrar tarefa</button>
+                )}
             </form>
 
 
@@ -92,8 +126,8 @@ export default function Admin() {
                     <article className='list' key={item.id}>
                         <p>{item.tarefa}</p>
                         <div>
-                            <button>Editar</button>
-                            <button onClick={ () => deleteTarefa(item.id) } className='btn-delete'>Concluir</button>
+                            <button onClick={() => editTarefa(item)}>Editar</button>
+                            <button onClick={() => deleteTarefa(item.id)} className='btn-delete'>Concluir</button>
                         </div>
                     </article>
                 )
